@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{title}}</h2>
+
+<mat-dialog-content [formGroup]="form">
+
+  <mat-form-field>
+    <mat-select placeholder="Select status"
+                formControlName="status">
+      <mat-option value="pending">
+        Pending
+      </mat-option>
+      <mat-option value="rejected">
+        Rejected
+      </mat-option>
+      <mat-option value="success">
+        Success
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="button-row">
+  <button mat-raised-button
+          (click)="close()">Close</button>
+  <button mat-raised-button color="primary"
+          (click)="save()">Save</button>
+  </div>
+</mat-dialog-actions>
