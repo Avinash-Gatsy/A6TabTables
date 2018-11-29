@@ -5,7 +5,7 @@ import {CommonModule} from '@angular/common';
 
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatTabsModule, MatTableModule, MatDialogModule, MatButtonModule, MatSelectModule} from '@angular/material';
+import {MatTabsModule, MatTableModule, MatDialogModule, MatButtonModule, MatSelectModule, MatPaginatorModule} from '@angular/material';
 import {DialogComponent} from './dialog/dialog.component';
 
 @NgModule({
@@ -23,6 +23,7 @@ import {DialogComponent} from './dialog/dialog.component';
     MatDialogModule,
     MatButtonModule,
     MatSelectModule,
+    MatPaginatorModule,
     CommonModule
   ],
   providers: [],

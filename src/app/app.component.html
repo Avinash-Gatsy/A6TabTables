@@ -1,5 +1,5 @@
 <div class="container">
-  <mat-tab-group backgroundColor="primary">
+  <mat-tab-group backgroundColor="primary" [@.disabled]="true">
     <mat-tab *ngFor="let tab of asyncTabs | async">
       <ng-template mat-tab-label>{{tab.label}}</ng-template>
       <table mat-table [dataSource]="tab.content" class="mat-elevation-z2">
@@ -28,4 +28,11 @@
             </table>
     </mat-tab>
   </mat-tab-group>
+
+  <mat-paginator [length]="length"
+                 [pageSize]="pageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="pageEvent = $event"
+                  (click)="onPageChange($event)">
+  </mat-paginator>
 </div>

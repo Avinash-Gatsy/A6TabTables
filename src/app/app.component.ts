@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, Observer, Subscription} from 'rxjs';
 import {DataService} from './data.service';
-import {MatDialog, MatDialogConfig} from '@angular/material';
+import {MatDialog, MatDialogConfig, PageEvent} from '@angular/material';
 import {DialogComponent} from './dialog/dialog.component';
 
 export interface ExampleTab {
@@ -24,6 +24,14 @@ export class AppComponent implements OnInit {
 
   private serverSubscription: Subscription;
 
+  // MatPaginator Inputs
+  length = 5;
+  pageSize = 2;
+  pageSizeOptions: number[] = [2];
+  currentPageIndex = 0;
+
+  // MatPaginator Output
+  pageEvent: PageEvent;
   constructor(private dataService: DataService,
               private dialog: MatDialog) {
   }
@@ -41,9 +49,10 @@ export class AppComponent implements OnInit {
 
         // need to reset the old values
         this.asyncTabs = Observable.create((observer: Observer<ExampleTab[]>) => {
+          this.length = this.pendingData.length;
           setTimeout(() => {
             observer.next([
-              {label: 'Pending', content: this.pendingData},
+              {label: 'Pending', content: this.pendingData.slice(0, this.pageSize)},
               {label: 'Rejected', content: this.rejectedData},
               {label: 'Success', content: this.successData},
             ]);
@@ -52,13 +61,14 @@ export class AppComponent implements OnInit {
       });
 
     this.asyncTabs = Observable.create((observer: Observer<ExampleTab[]>) => {
+      this.length = this.pendingData.length;
       setTimeout(() => {
         observer.next([
-          {label: 'Pending', content: this.pendingData},
+          {label: 'Pending', content: this.pendingData.slice(0, this.pageSize)},
           {label: 'Rejected', content: this.rejectedData},
           {label: 'Success', content: this.successData},
         ]);
-      }, 1000);
+      }, 0);
     });
   }
 
@@ -86,5 +96,42 @@ export class AppComponent implements OnInit {
       uuid: row.uuid
     };
     this.dialog.open(DialogComponent, dialogConfig);
+  }
+  onPageChange(event) {
+    console.log(this.pageEvent.pageIndex);
+    // if its a forward arrow
+    if (this.pageEvent.pageIndex > this.currentPageIndex) {
+      const MinSize = this.pageSize * this.pageEvent.pageIndex;
+      const MaxSize = this.pageSize * (this.pageEvent.pageIndex + 1 );
+
+      // need to reset the old values - create a function that is reusuable
+      this.asyncTabs = Observable.create((observer: Observer<ExampleTab[]>) => {
+        this.length = this.pendingData.length;
+        setTimeout(() => {
+          observer.next([
+            {label: 'Pending', content: this.pendingData.slice(MinSize, MaxSize)},
+            {label: 'Rejected', content: this.rejectedData},
+            {label: 'Success', content: this.successData},
+          ]);
+        }, 0);
+      });
+    } else if (this.pageEvent.pageIndex < this.currentPageIndex) {
+      // backward arrow
+      const MinSize = this.pageSize * this.pageEvent.pageIndex;
+      const MaxSize = this.pageSize * this.currentPageIndex;
+
+      // need to reset the old values - create a function that is reusuable
+      this.asyncTabs = Observable.create((observer: Observer<ExampleTab[]>) => {
+        this.length = this.pendingData.length;
+        setTimeout(() => {
+          observer.next([
+            {label: 'Pending', content: this.pendingData.slice(MinSize, MaxSize)},
+            {label: 'Rejected', content: this.rejectedData},
+            {label: 'Success', content: this.successData},
+          ]);
+        }, 0);
+      });
+    }
+    this.currentPageIndex = this.pageEvent.pageIndex;
   }
 }
